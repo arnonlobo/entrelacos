@@ -71,13 +71,13 @@
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 5; /* Acima do conteúdo para o blend mode funcionar */
+        z-index: 5;
         display: flex;
         align-items: center;
         justify-content: center;
         pointer-events: none;
         padding: 40px;
-        mix-blend-mode: difference; /* Garante visibilidade em fundos claros/escuros */
+        mix-blend-mode: difference;
       }
 
       #typewriter-text {
@@ -86,7 +86,7 @@
         line-height: 1.2;
         font-weight: 700;
         color: #ffffff;
-        opacity: 0.04; /* BEM SUTIL durante a navegação para não atrapalhar */
+        opacity: 0.04;
         text-align: left;
         width: 100%;
         max-width: 1200px;
@@ -372,9 +372,8 @@
         padding: 80px 5%;
         text-align: center;
         border-top: 10px solid var(--accent);
-        /* Z-index maior que o texto da máquina para cobri-lo durante o scroll */
         position: relative;
-        z-index: 20;
+        z-index: 20; /* Garante que fique sobre outros elementos */
       }
       .btn-footer {
         display: inline-block;
@@ -397,8 +396,8 @@
 
       /* --- FINAL MANIFESTO SPACE (Repouso) --- */
       #final-space {
-        min-height: 100vh; /* Altura de tela cheia para foco total */
-        background-color: var(--primary); /* Fundo escuro */
+        min-height: 100vh;
+        background-color: var(--primary);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -406,7 +405,16 @@
         z-index: 1;
       }
 
-      /* Mobile */
+      /* --- MOBILE STYLES --- */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
       @media (max-width: 900px) {
         .about-grid {
           grid-template-columns: 1fr;
@@ -426,6 +434,30 @@
         }
         #typewriter-text {
           font-size: 1.5rem;
+          opacity: 0.1;
+        }
+
+        /* Mobile Nav */
+        .mobile-menu-btn {
+          display: block;
+        }
+        .nav-links {
+          position: absolute;
+          top: 80px;
+          left: 0;
+          width: 100%;
+          background: var(--bg); /* Fundo sólido para leitura */
+          flex-direction: column;
+          padding: 30px 0;
+          text-align: center;
+          border-bottom: 2px solid var(--accent);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-links.active {
+          display: flex;
+        }
+        .nav-links li {
+          margin: 15px 0;
         }
       }
     </style>
@@ -454,6 +486,8 @@
 
     <nav>
       <a href="#" class="logo">entre<span>laços</span>.</a>
+      <!-- Botão Menu Mobile -->
+      <button class="mobile-menu-btn">☰</button>
       <ul class="nav-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#sobre">Quem Somos</a></li>
@@ -666,6 +700,17 @@
           },
         });
 
+        // Ajuste do Container do Texto no final
+        gsap.to("#typewriter-container", {
+          mixBlendMode: "normal",
+          scrollTrigger: {
+            trigger: "#final-space",
+            start: "top 80%",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+
         // Cursor personalizado
         if (window.matchMedia("(min-width: 769px)").matches) {
           const cursor = document.querySelector(".cursor-quill");
@@ -690,6 +735,21 @@
               });
             });
         }
+
+        // LOGICA DO MENU MOBILE (CORREÇÃO)
+        const mobileBtn = document.querySelector(".mobile-menu-btn");
+        const navLinks = document.querySelector(".nav-links");
+
+        mobileBtn.addEventListener("click", () => {
+          navLinks.classList.toggle("active");
+        });
+
+        // Fechar ao clicar em um link
+        navLinks.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+          });
+        });
       });
     </script>
   </body>
