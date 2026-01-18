@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ENTRELAÇOS // Conteúdo e Estratégia</title>
+
+    <!-- Fontes -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Manrope:wght@300;400;600;800&family=Courier+Prime:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- GSAP (Animações) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <style>
+      :root {
+        --bg: #fdfcfb;
+        --primary: #123d34; /* Verde Floresta */
+        --primary-dark: #0d2b25;
+        --accent: #eebcb3; /* Rosa Salmão */
+        --accent-light: #fbece9;
+        --accent-dark: #d69c92;
+        --text-body: #2c4a44;
+        --white: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--primary);
+        font-family: "Manrope", sans-serif;
+        overflow-x: hidden;
+        line-height: 1.5;
+      }
+
+      h1,
+      h2,
+      h3,
+      blockquote,
+      .serif {
+        font-family: "Cinzel", serif;
+      }
+
+      /* --- BACKGROUND FIXO --- */
+      #bg-texture {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://blog.useartools.com.br/wp-content/uploads/2025/05/pessoa-escrevendo-em-mesa-preta.webp");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.05;
+        z-index: -10;
+        pointer-events: none;
+      }
+
+      /* --- TEXTO DATILOGRAFADO (FIXO) --- */
+      #typewriter-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 5; /* Acima do conteúdo para o blend mode funcionar */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        padding: 40px;
+        mix-blend-mode: difference; /* Garante visibilidade em fundos claros/escuros */
+      }
+
+      #typewriter-text {
+        font-family: "Courier Prime", monospace;
+        font-size: clamp(2.5rem, 6vw, 5rem);
+        line-height: 1.2;
+        font-weight: 700;
+        color: #ffffff;
+        opacity: 0.04; /* BEM SUTIL durante a navegação para não atrapalhar */
+        text-align: left;
+        width: 100%;
+        max-width: 1200px;
+        white-space: pre-wrap;
+        transition: opacity 0.3s ease;
+      }
+
+      /* --- NAVEGAÇÃO --- */
+      nav {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 80px;
+        padding: 0 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background: rgba(253, 252, 251, 0.95);
+        backdrop-filter: blur(5px);
+        border-bottom: 1px solid rgba(18, 61, 52, 0.1);
+      }
+
+      .logo {
+        font-family: "Manrope", sans-serif;
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: var(--primary);
+        text-decoration: none;
+        letter-spacing: -1px;
+      }
+      .logo span {
+        color: var(--accent-dark);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      /* --- CURSOR (Apenas Desktop) --- */
+      .cursor-quill {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        width: 40px;
+        height: 40px;
+        margin-left: -5px;
+        margin-top: -35px;
+        display: none;
+      }
+      @media (min-width: 769px) {
+        body {
+          cursor: none;
+        }
+        .cursor-quill {
+          display: block;
+        }
+        a:hover,
+        button:hover,
+        .service-card:hover {
+          cursor: none;
+        }
+      }
+
+      /* --- SEÇÕES --- */
+      section {
+        padding: 80px 5%;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* HERO */
+      .hero {
+        min-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .hero h1 {
+        font-size: clamp(3rem, 8vw, 7rem);
+        line-height: 1;
+        font-weight: 800;
+        letter-spacing: -2px;
+        color: var(--primary);
+      }
+      .hero-subtitle {
+        margin-top: 30px;
+        font-size: 1.3rem;
+        max-width: 600px;
+        border-left: 5px solid var(--accent);
+        padding-left: 25px;
+        color: var(--text-body);
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+      }
+
+      /* MARQUEE */
+      .marquee {
+        background: var(--primary);
+        color: var(--accent);
+        padding: 20px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        transform: rotate(-1deg);
+        width: 105%;
+        margin-left: -2.5%;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+      .marquee-content {
+        display: inline-block;
+        animation: scroll 30s linear infinite;
+        font-family: "Manrope", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        letter-spacing: 3px;
+      }
+      @keyframes scroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* QUEM SOMOS */
+      #sobre {
+        background: var(--accent-light);
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 50px;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .about-text h2 {
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+      .quote {
+        font-family: "Cinzel", serif;
+        font-style: italic;
+        font-size: 1.6rem;
+        color: var(--primary);
+        margin-bottom: 25px;
+        font-weight: 600;
+        background: var(--white);
+        padding: 20px;
+        border-left: 5px solid var(--primary);
+      }
+      .about-img-box {
+        position: relative;
+        height: 550px;
+        border: 8px solid var(--white);
+        box-shadow: 15px 15px 0px var(--primary);
+      }
+      .about-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* SERVIÇOS */
+      #servicos {
+        background: var(--primary);
+        color: var(--white);
+      }
+      .services-head {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .services-head h2 {
+        font-size: 3.5rem;
+        color: var(--white);
+        margin-top: 10px;
+      }
+      .services-head span {
+        color: var(--accent);
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+      .service-card {
+        background: #1a4d43;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+      .service-card:hover {
+        transform: translateY(-10px);
+        background: var(--white);
+      }
+      .service-card:hover h3,
+      .service-card:hover p,
+      .service-card:hover li {
+        color: var(--primary);
+      }
+
+      .service-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: var(--accent);
+        font-family: "Cinzel", serif;
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 15px;
+        display: inline-block;
+      }
+      .service-card p {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 20px;
+      }
+
+      .service-list {
+        list-style: none;
+      }
+      .service-list li {
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+      }
+      .service-list li::before {
+        content: "✦";
+        color: var(--accent);
+        margin-right: 10px;
+      }
+
+      /* CLIENTES */
+      #clientes {
+        background: var(--white);
+        text-align: center;
+      }
+      .clients-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 40px;
+      }
+      .client-pill {
+        padding: 15px 30px;
+        border: 2px solid var(--primary);
+        font-family: "Cinzel", serif;
+        font-weight: 700;
+        color: var(--primary);
+        text-transform: uppercase;
+        transition: 0.3s;
+        background: transparent;
+      }
+      .client-pill:hover {
+        background: var(--primary);
+        color: var(--white);
+      }
+
+      /* FOOTER */
+      footer {
+        background: var(--accent-light);
+        padding: 80px 5%;
+        text-align: center;
+        border-top: 10px solid var(--accent);
+        /* Z-index maior que o texto da máquina para cobri-lo durante o scroll */
+        position: relative;
+        z-index: 20;
+      }
+      .btn-footer {
+        display: inline-block;
+        padding: 25px 60px;
+        background: var(--primary);
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1.1rem;
+        margin-top: 30px;
+        transition: 0.3s;
+        box-shadow: 10px 10px 0px var(--accent-dark);
+      }
+      .btn-footer:hover {
+        transform: translate(2px, 2px);
+        box-shadow: 5px 5px 0px var(--primary);
+      }
+
+      /* --- FINAL MANIFESTO SPACE (Repouso) --- */
+      #final-space {
+        min-height: 80vh; /* Altura generosa para repouso */
+        background-color: var(--primary); /* Fundo escuro */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* --- MOBILE STYLES --- */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: var(--primary);
+        cursor: pointer;
+      }
+
+      @media (max-width: 900px) {
+        /* Ajustes Gerais */
+        h1 {
+          font-size: 2.8rem !important;
+        }
+        section {
+          padding: 60px 5%;
+        }
+
+        /* Ajustes do Texto de Fundo */
+        #typewriter-text {
+          font-size: 1.8rem;
+          padding: 0 10px;
+        }
+        #typewriter-container {
+          padding: 20px;
+        }
+
+        /* Grid Quem Somos */
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 30px;
+        }
+        .about-img-box {
+          order: -1;
+          height: 350px;
+        }
+        .quote {
+          font-size: 1.3rem;
+        }
+
+        /* Grid Serviços */
+        .services-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .services-head h2 {
+          font-size: 2.5rem;
+        }
+
+        /* Navegação Mobile */
+        .mobile-menu-btn {
+          display: block;
+        }
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 80px;
+          left: 0;
+          width: 100%;
+          background: var(--bg);
+          flex-direction: column;
+          padding: 30px 0;
+          text-align: center;
+          border-bottom: 2px solid var(--accent);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-links.active {
+          display: flex;
+        }
+        .nav-links li {
+          margin: 15px 0;
+        }
+
+        /* Ajuste Final Space */
+        #final-space {
+          min-height: 60vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fundo Fixo (Imagem) -->
+    <div id="bg-texture"></div>
+
+    <!-- Texto de Fundo (Máquina de Escrever) -->
+    <div id="typewriter-container">
+      <div id="typewriter-text"></div>
+    </div>
+
+    <!-- Cursor Personalizado -->
+    <div class="cursor-quill">
+      <svg
+        fill="#123d34"
+        viewBox="0 0 512 512"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M498.4 13.5c-9.6-9.6-25.2-9.6-34.8 0L208.2 269c-9.6 9.6-13.4 23.3-10.4 36.4l20.4 89.2c1.7 7.4 8.3 12.6 15.9 12.6 1 0 2-.1 3-.3l89.2-20.4c13.1-3 26.8-6.9 36.4-16.4L618.4 114.9c9.6-9.6 9.6-25.2 0-34.8L498.4 13.5zM63.6 426.6l-13-13C25.3 388.3 25.3 347.3 50.6 322l128-128c9.6-9.6 25.2-9.6 34.8 0 9.6 9.6 9.6 25.2 0 34.8L85.4 356.8c-6.1 6.1-6.1 16 0 22.1l13 13c6.1 6.1 16 6.1 22.1 0l128-128c9.6-9.6 25.2-9.6 34.8 0 9.6 9.6 9.6 25.2 0 34.8l-128 128c-25.3 25.3-66.3 25.3-91.6 0z"
+        />
+      </svg>
+    </div>
+
+    <nav>
+      <a href="#" class="logo">entre<span>laços</span>.</a>
+      <button
+        class="mobile-menu-btn"
+        onclick="
+          document.querySelector('.nav-links').classList.toggle('active')
+        "
+      >
+        ☰
+      </button>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#sobre">Quem Somos</a></li>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero" id="home">
+      <h1>
+        Narrativas<br />
+        <span style="color: var(--accent); font-style: italic">Sólidas</span>
+        para<br />
+        Arquitetura.
+      </h1>
+      <div class="hero-subtitle">
+        <p>
+          Estratégia digital e conteúdo jornalístico para escritórios que buscam
+          autoridade, elegância e resultados reais no mercado de luxo.
+        </p>
+      </div>
+    </section>
+
+    <div class="marquee">
+      <div class="marquee-content">
+        GERENCIAMENTO DE MÍDIAS • CONSULTORIA ESTRATÉGICA • ROTEIROS PARA VÍDEO
+        • CURSOS ONLINE • BRANDING • GERENCIAMENTO DE MÍDIAS • CONSULTORIA
+        ESTRATÉGICA • ROTEIROS PARA VÍDEO • CURSOS ONLINE • BRANDING •
+      </div>
+    </div>
+
+    <section id="sobre">
+      <div class="about-grid">
+        <div class="about-text">
+          <p
+            style="
+              color: var(--primary);
+              font-weight: 800;
+              letter-spacing: 2px;
+              margin-bottom: 10px;
+            "
+          >
+            A FUNDADORA
+          </p>
+          <div class="quote">
+            "Escrevendo que eu existo. A minha forma de existir no mundo é
+            através da escrita."
+          </div>
+          <p style="margin-bottom: 20px; font-size: 1.1rem">
+            <strong>Fernanda Pinho</strong> é jornalista com sólida trajetória
+            no impresso (Revista Imobiliari, Líder, Ponteio). Ela entendeu que a
+            arquitetura exige uma linguagem única: técnica para o profissional,
+            poética para o cliente.
+          </p>
+          <p style="font-size: 1.1rem">
+            Na Entrelaços, unimos o rigor da apuração jornalística à velocidade
+            do digital. Não fazemos apenas posts; documentamos legados.
+          </p>
+        </div>
+        <div class="about-img-box">
+          <img
+            src="https://i.ibb.co/ksqd98t5/Captura-de-tela-2026-01-17-174910.jpg"
+            alt="Fernanda Pinho"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="servicos">
+      <div class="services-head">
+        <span>Soluções Dedicadas</span>
+        <h2>Nossos Serviços</h2>
+      </div>
+
+      <div class="services-grid">
+        <!-- Card 1 -->
+        <div class="service-card">
+          <h3>Gerenciamento Total</h3>
+          <p>
+            Serviço por meio do qual cuidamos integralmente das redes sociais de
+            um cliente desenvolvendo planejamento estratégico de conteúdo, copy,
+            escolha de imagens, arte gráfica, organização de feed, roteiros para
+            vídeos, programação de postagens e outras demandas específicas.
+          </p>
+          <ul class="service-list">
+            <li>Planejamento Estratégico</li>
+            <li>Copy Jornalístico</li>
+            <li>Curadoria de Imagens</li>
+            <li>Edição de Reels</li>
+            <li>Tráfego Pago</li>
+          </ul>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="service-card">
+          <h3>Consultoria</h3>
+          <p>
+            A consultoria é uma contratação pontual para um encontro (presencial
+            ou on-line) com duas horas de duração na qual trabalharemos para
+            resolver uma demanda específica. Esta demanda é diagnosticada por
+            meio de um briefing previamente enviado ao cliente.
+          </p>
+          <ul class="service-list">
+            <li>Diagnóstico via Briefing</li>
+            <li>Análise de Posicionamento</li>
+            <li>Definição de Linha Editorial</li>
+            <li>Treinamento de Equipe</li>
+            <li>Online ou Presencial</li>
+          </ul>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="service-card">
+          <h3>Script para Vídeos</h3>
+          <p>
+            Visando auxiliar nosso mercado na entrega de vídeos que informam,
+            impactam e emocionam, produzimos roteiros para gravação bem como
+            textos em diferentes formatos para serem utilizados como narração
+            desses vídeos.
+          </p>
+          <ul class="service-list">
+            <li>Scripts para YouTube</li>
+            <li>Roteiros para Reels/TikTok</li>
+            <li>Storytelling de Obra</li>
+            <li>Textos para Narração</li>
+            <li>Direção de Cena</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="clientes">
+      <h2 style="font-size: 2.5rem; margin-bottom: 30px; color: var(--primary)">
+        Parceiros & Mídia
+      </h2>
+      <div class="clients-grid">
+        <div class="client-pill">Revista Imobiliari</div>
+        <div class="client-pill">Revista da Líder</div>
+        <div class="client-pill">Revista do Ponteio</div>
+        <div class="client-pill">Casas de Design</div>
+        <div class="client-pill">Mostra Morar Mais</div>
+      </div>
+    </section>
+
+    <footer id="contato">
+      <h2 style="font-size: 3rem; margin-bottom: 20px">Vamos conversar?</h2>
+      <p>
+        Seu escritório merece uma comunicação à altura da sofisticação dos seus
+        projetos.
+      </p>
+      <a
+        href="https://www.instagram.com/entrelacosconteudo/"
+        target="_blank"
+        class="btn-footer"
+        >Entrar em Contato</a
+      >
+      <div style="margin-top: 60px; font-size: 0.8rem; opacity: 0.7">
+        © 2026 ENTRELAÇOS. BELO HORIZONTE.
+      </div>
+    </footer>
+
+    <!-- NOVA SEÇÃO FINAL: O Espaço de Repouso -->
+    <section id="final-space">
+      <!-- O conteúdo aqui é o texto fixo do background que vai aparecer por cima -->
+    </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // GSAP Plugins
+        gsap.registerPlugin(ScrollTrigger);
+
+        // TEXTO DE FUNDO
+        const typeText = document.getElementById("typewriter-text");
+        // Texto mais longo para preencher o visual
+        const fullText =
+          "A ARQUITETURA NÃO TERMINA NA CONSTRUÇÃO. ELA CONTINUA NA HISTÓRIA QUE É CONTADA SOBRE ELA. ESTRUTURA SÓLIDA. ESTÉTICA APURADA. ALMA. TEXTO. DESIGN. ESTRATÉGIA.";
+
+        // Garantir que comece vazio
+        typeText.innerText = "";
+
+        let obj = { length: 0 };
+
+        // 1. Animação de Digitação (acontece durante todo o scroll da página)
+        gsap.to(obj, {
+          length: fullText.length,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1,
+          },
+          onUpdate: () => {
+            const len = Math.ceil(obj.length);
+            typeText.innerText = fullText.substring(0, len) + "|";
+          },
+        });
+
+        // 2. Animação de "Destaque" do Texto no Final
+        // Quando chegar na seção #final-space, o texto ganha opacidade total e cor vibrante
+        gsap.to("#typewriter-text", {
+          opacity: 1,
+          color: "#eebcb3", // Rosa Salmão para contraste no fundo verde escuro
+          mixBlendMode: "normal", // Remove o blend mode para ficar nítido
+          scrollTrigger: {
+            trigger: "#final-space",
+            start: "top 70%", // Ajustado para começar antes de terminar o scroll
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+
+        // Ajuste do Container do Texto no final
+        gsap.to("#typewriter-container", {
+          mixBlendMode: "normal",
+          scrollTrigger: {
+            trigger: "#final-space",
+            start: "top 80%",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        });
+
+        // Cursor personalizado (apenas desktop)
+        if (window.matchMedia("(min-width: 769px)").matches) {
+          const cursor = document.querySelector(".cursor-quill");
+          window.addEventListener("mousemove", (e) => {
+            gsap.to(cursor, {
+              x: e.clientX,
+              y: e.clientY,
+              duration: 0.1,
+              ease: "power1.out",
+            });
+          });
+
+          // Hover Effects
+          document
+            .querySelectorAll("a, .service-card, .btn-footer")
+            .forEach((el) => {
+              el.addEventListener("mouseenter", () => {
+                gsap.to(cursor, { scale: 1.2, rotation: -15, duration: 0.3 });
+              });
+              el.addEventListener("mouseleave", () => {
+                gsap.to(cursor, { scale: 1, rotation: 0, duration: 0.3 });
+              });
+            });
+        }
+
+        // Menu Mobile Toggle
+        const navLinks = document.querySelector(".nav-links");
+        // Fechar menu ao clicar em um link
+        navLinks.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
