@@ -5,26 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ENTRELAÇOS // Conteúdo e Estratégia</title>
 
-    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Manrope:wght@300;400;600;800&family=Courier+Prime:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Mulish:wght@300;400;600;800&family=Courier+Prime:wght@700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- GSAP (Animações) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
     <style>
       :root {
-        --bg: #fdfcfb;
         --primary: #123d34; /* Verde Floresta */
-        --primary-dark: #0d2b25;
-        --accent: #eebcb3; /* Rosa Salmão */
-        --accent-light: #fbece9;
-        --accent-dark: #d69c92;
-        --text-body: #2c4a44;
+        --primary-dark: #0a241f;
+        --accent: #dca89e; /* Rosa/Pele */
+        --bg-body: #fdfdfd;
+        --bg-gray: #f4f4f4;
+        --text: #333333;
         --white: #ffffff;
+        --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.12);
+        --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+        --font-title: "Cinzel", serif;
+        --font-body: "Mulish", sans-serif;
+        --font-typewriter: "Courier Prime", monospace; /* Fonte da Máquina */
       }
 
       * {
@@ -34,64 +41,93 @@
       }
 
       body {
-        background-color: var(--bg);
-        color: var(--primary);
-        font-family: "Manrope", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text);
+        font-family: var(--font-body);
         overflow-x: hidden;
-        line-height: 1.5;
+        line-height: 1.7;
+        scroll-behavior: smooth;
       }
 
+      /* --- TIPOGRAFIA --- */
       h1,
       h2,
-      h3,
-      blockquote,
-      .serif {
-        font-family: "Cinzel", serif;
+      h3 {
+        font-family: var(--font-title);
+        color: var(--primary);
+        font-weight: 600;
+        line-height: 1.2;
       }
 
-      /* --- BACKGROUND FIXO --- */
-      #bg-texture {
+      h1 {
+        font-size: clamp(2.5rem, 5vw, 4.5rem);
+        letter-spacing: -0.03em;
+      }
+
+      h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        position: relative;
+        display: inline-block;
+      }
+
+      h2::after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.5s ease;
+      }
+
+      h2:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      p {
+        color: #555;
+        margin-bottom: 20px;
+        font-size: 1.05rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* --- TEXTO DE FUNDO (MÁQUINA DE ESCREVER) --- */
+      #bg-typewriter {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url("https://blog.useartools.com.br/wp-content/uploads/2025/05/pessoa-escrevendo-em-mesa-preta.webp");
-        background-size: cover;
-        background-position: center;
-        opacity: 0.05;
-        z-index: -10;
-        pointer-events: none;
-      }
-
-      /* --- TEXTO DATILOGRAFADO (FIXO) --- */
-      #typewriter-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 5;
+        z-index: 0; /* Fica atrás de tudo */
         display: flex;
         align-items: center;
         justify-content: center;
         pointer-events: none;
-        padding: 40px;
-        mix-blend-mode: difference;
+        overflow: hidden;
       }
 
       #typewriter-text {
-        font-family: "Courier Prime", monospace;
-        font-size: clamp(2.5rem, 6vw, 5rem);
-        line-height: 1.2;
+        font-family: var(--font-typewriter);
+        font-size: clamp(3rem, 6vw, 5rem); /* Grande */
+        line-height: 1.1;
         font-weight: 700;
-        color: #ffffff;
-        opacity: 0.04;
+        color: var(--primary);
+        opacity: 0.04; /* BEM SUAVE para não atrapalhar */
         text-align: left;
         width: 100%;
-        max-width: 1200px;
-        white-space: pre-wrap;
-        transition: opacity 0.3s ease;
+        max-width: 1400px;
+        white-space: pre-wrap; /* Permite quebra de linha */
+        padding: 40px;
+        letter-spacing: -0.05em;
       }
 
       /* --- NAVEGAÇÃO --- */
@@ -99,121 +135,272 @@
         position: fixed;
         top: 0;
         width: 100%;
+        height: 90px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+      }
+
+      nav.scrolled {
         height: 80px;
-        padding: 0 5%;
+        background: rgba(255, 255, 255, 0.99);
+        box-shadow: var(--shadow-md);
+      }
+
+      nav.scrolled .logo img {
+        height: 50px;
+      }
+
+      .nav-content {
+        width: 100%;
+        max-width: 1200px;
+        padding: 0 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        z-index: 1000;
-        background: rgba(253, 252, 251, 0.95);
-        backdrop-filter: blur(5px);
-        border-bottom: 1px solid rgba(18, 61, 52, 0.1);
       }
 
       .logo {
-        font-family: "Manrope", sans-serif;
-        font-weight: 800;
-        font-size: 1.5rem;
-        color: var(--primary);
-        text-decoration: none;
-        letter-spacing: -1px;
+        transition: var(--transition);
       }
-      .logo span {
-        color: var(--accent-dark);
+
+      .logo img {
+        height: 60px;
+        width: auto;
+        display: block;
+        transition: var(--transition);
       }
 
       .nav-links {
         display: flex;
-        gap: 30px;
+        gap: 40px;
         list-style: none;
       }
+
       .nav-links a {
         text-decoration: none;
         color: var(--primary);
         font-weight: 700;
         text-transform: uppercase;
-        font-size: 0.9rem;
-        letter-spacing: 1px;
-      }
-
-      /* --- CURSOR --- */
-      .cursor-quill {
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        width: 40px;
-        height: 40px;
-        margin-left: -5px;
-        margin-top: -35px;
-        display: none;
-      }
-      @media (min-width: 769px) {
-        body {
-          cursor: none;
-        }
-        .cursor-quill {
-          display: block;
-        }
-        a:hover,
-        button:hover,
-        .service-card:hover {
-          cursor: none;
-        }
-      }
-
-      /* --- SEÇÕES --- */
-      section {
-        padding: 80px 5%;
+        font-size: 0.85rem;
+        letter-spacing: 1.5px;
         position: relative;
-        z-index: 1;
+        padding: 8px 0;
+        transition: var(--transition);
       }
 
-      /* HERO */
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 2px;
+        background: var(--accent);
+        transition: var(--transition);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
+      .nav-links a.active::after {
+        width: 100%;
+        background: var(--primary);
+      }
+
+      /* --- SEÇÕES (Z-Index Ajustado) --- */
+      section,
+      footer,
+      .visual-break,
+      .marquee-section {
+        position: relative;
+        z-index: 2; /* Garante que o conteúdo fique SOBRE o texto de fundo */
+      }
+
+      /* --- HERO --- */
       .hero {
-        min-height: 90vh;
+        min-height: 100vh;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-      }
-      .hero h1 {
-        font-size: clamp(3.5rem, 8vw, 7rem);
-        line-height: 1;
-        font-weight: 800;
-        letter-spacing: -2px;
-        color: var(--primary);
-      }
-      .hero-subtitle {
-        margin-top: 30px;
-        font-size: 1.3rem;
-        max-width: 600px;
-        border-left: 5px solid var(--accent);
-        padding-left: 25px;
-        color: var(--text-body);
-        font-weight: 500;
-        background: rgba(255, 255, 255, 0.8);
-        padding: 20px;
+        overflow: hidden;
+        background: transparent;
+        padding: 0 20px;
+        position: relative;
       }
 
-      /* MARQUEE */
-      .marquee {
+      .hero-content {
+        max-width: 800px;
+        text-align: center;
+        position: relative;
+        z-index: 3;
+        padding-top: 60px;
+      }
+
+      .hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        z-index: -2;
+        filter: grayscale(100%) brightness(0.85) contrast(1.1);
+      }
+
+      /* Máscara branca mais forte para o texto aparecer bem sobre a imagem */
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.92) 0%,
+          rgba(255, 255, 255, 0.85) 100%
+        );
+        z-index: -1;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.8rem, 6vw, 4.8rem);
+        line-height: 1.1;
+        margin-bottom: 30px;
+        opacity: 0;
+        transform: translateY(30px);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .hero h1 span {
+        color: var(--accent);
+        font-style: italic;
+        position: relative;
+      }
+
+      .hero h1 span::after {
+        content: "";
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--primary);
+        opacity: 0.3;
+        z-index: -1;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+        max-width: 650px;
+        margin: 0 auto 40px;
+        border-left: 4px solid var(--primary);
+        padding-left: 25px;
+        opacity: 0;
+        transform: translateY(30px);
+        text-align: left;
+        font-weight: 300;
+        line-height: 1.8;
+      }
+
+      .hero-cta {
+        display: inline-block;
+        padding: 16px 45px;
+        background: var(--primary);
+        color: var(--white);
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-size: 0.9rem;
+        border-radius: 30px;
+        transition: var(--transition);
+        opacity: 0;
+        transform: translateY(20px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .hero-cta:hover {
+        background: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .hero-cta:active {
+        transform: translateY(0);
+      }
+
+      /* --- MARQUEE --- */
+      .marquee-section {
         background: var(--primary);
         color: var(--accent);
-        padding: 20px 0;
+        padding: 18px 0;
         overflow: hidden;
         white-space: nowrap;
-        transform: rotate(-1deg);
-        width: 105%;
-        margin-left: -2.5%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
       }
+
+      .marquee-section::before,
+      .marquee-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 150px;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          var(--primary) 0%,
+          transparent 100%
+        );
+        z-index: 10;
+      }
+
+      .marquee-section::before {
+        left: 0;
+        background: linear-gradient(
+          to right,
+          var(--primary) 0%,
+          transparent 100%
+        );
+      }
+
+      .marquee-section::after {
+        right: 0;
+        background: linear-gradient(
+          to left,
+          var(--primary) 0%,
+          transparent 100%
+        );
+      }
+
       .marquee-content {
         display: inline-block;
-        animation: scroll 30s linear infinite;
-        font-family: "Manrope", sans-serif;
-        font-weight: 800;
-        font-size: 1.1rem;
+        font-family: var(--font-title);
+        font-size: 1.6rem;
+        font-weight: 600;
         letter-spacing: 3px;
+        animation: scroll 35s linear infinite;
+        padding-left: 50px;
       }
+
+      .marquee-content::after {
+        content: attr(data-content);
+        display: inline-block;
+        margin-left: 50px;
+      }
+
       @keyframes scroll {
         0% {
           transform: translateX(0);
@@ -223,532 +410,960 @@
         }
       }
 
-      /* QUEM SOMOS */
-      #sobre {
-        background: var(--accent-light);
+      /* --- QUEM SOMOS --- */
+      .about {
+        padding: 140px 0;
+        background: var(--white);
+        position: relative;
       }
+
+      .about::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23fdfdfd"/><path d="M0,50 L100,50 L100,100 L0,100 Z" fill="%23f4f4f4"/></svg>');
+        background-size: cover;
+        z-index: -1;
+        opacity: 0.03;
+      }
+
       .about-grid {
         display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 50px;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
         align-items: center;
-        max-width: 1200px;
-        margin: 0 auto;
       }
-      .about-text h2 {
-        font-size: 3rem;
-        margin-bottom: 20px;
-      }
-      .quote {
-        font-family: "Cinzel", serif;
-        font-style: italic;
-        font-size: 1.6rem;
-        color: var(--primary);
-        margin-bottom: 25px;
-        font-weight: 600;
-        background: var(--white);
-        padding: 20px;
-        border-left: 5px solid var(--primary);
-      }
-      .about-img-box {
+
+      .about-img-wrap {
         position: relative;
-        height: 550px;
-        border: 8px solid var(--white);
-        box-shadow: 15px 15px 0px var(--primary);
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        transform: translateZ(0);
+        transition: var(--transition);
       }
-      .about-img-box img {
+
+      .about-img-wrap:hover {
+        transform: scale(1.02);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+      }
+
+      .about-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: var(--transition);
+        filter: grayscale(100%) contrast(1.1);
+      }
+
+      .about-text h2 {
+        font-size: 3.2rem;
+        margin-bottom: 40px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .about-text p {
+        text-align: justify;
+        margin-bottom: 25px;
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+
+      .about-text p strong {
+        color: var(--primary);
+        font-weight: 800;
+      }
+
+      .btn-insta {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 30px;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+        padding-bottom: 5px;
+        transition: var(--transition);
+        font-size: 1.05rem;
+        border-bottom: 2px solid transparent;
+      }
+
+      .btn-insta:hover {
+        color: var(--accent);
+        border-bottom: 2px solid var(--accent);
+        padding-left: 8px;
+      }
+
+      .btn-insta::after {
+        content: "→";
+        margin-left: 8px;
+        transition: var(--transition);
+      }
+
+      .btn-insta:hover::after {
+        margin-left: 15px;
+      }
+
+      /* --- VISUAL BREAK --- */
+      .visual-break {
+        height: 80vh;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+      }
+
+      .visual-break::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(18, 61, 52, 0.65);
+        z-index: 1;
+      }
+
+      .visual-break img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        opacity: 0.95;
+        filter: grayscale(30%) contrast(1.1) brightness(0.9);
+        transition: var(--transition);
       }
 
-      /* SERVIÇOS */
-      #servicos {
-        background: var(--primary);
-        color: var(--white);
+      /* --- SERVIÇOS --- */
+      .services {
+        padding: 140px 0;
+        background: var(--bg-gray);
+        position: relative;
+        overflow: hidden;
       }
-      .services-head {
+
+      .services::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -10%;
+        width: 120%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(220, 168, 158, 0.08) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        z-index: 0;
+        transform: rotate(-15deg);
+      }
+
+      .services-header {
         text-align: center;
-        margin-bottom: 60px;
+        margin-bottom: 80px;
+        position: relative;
+        z-index: 2;
       }
-      .services-head h2 {
-        font-size: 3.5rem;
-        color: var(--white);
+
+      .services-header span {
+        display: block;
+        font-family: var(--font-body);
+        color: var(--accent);
+        font-weight: 800;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+      }
+
+      .services-header h2 {
+        font-size: 3.2rem;
         margin-top: 10px;
       }
-      .services-head span {
-        color: var(--accent);
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-      }
 
-      .services-grid {
+      .services-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 30px;
-        max-width: 1300px;
-        margin: 0 auto;
-      }
-      .service-card {
-        background: #1a4d43;
-        padding: 40px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 45px;
         position: relative;
-        transition: transform 0.3s ease;
+        z-index: 2;
       }
+
+      .service-card {
+        background: var(--white);
+        padding: 55px 45px;
+        border-radius: 12px;
+        transition: var(--transition);
+        opacity: 0;
+        transform: translateY(30px);
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .service-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.6s ease;
+        z-index: 1;
+      }
+
       .service-card:hover {
         transform: translateY(-10px);
-        background: var(--white);
+        box-shadow: var(--shadow-lg);
       }
-      .service-card:hover h3,
-      .service-card:hover p,
-      .service-card:hover li {
-        color: var(--primary);
+
+      .service-card:hover::before {
+        transform: scaleX(1);
+        transform-origin: left;
       }
 
       .service-card h3 {
-        font-size: 1.8rem;
-        margin-bottom: 15px;
-        color: var(--accent);
-        font-family: "Cinzel", serif;
-        border-bottom: 2px solid var(--accent);
-        padding-bottom: 15px;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        position: relative;
         display: inline-block;
+        padding-bottom: 10px;
       }
+
+      .service-card h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--primary);
+        opacity: 0.3;
+      }
+
       .service-card p {
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        color: #666;
+        font-size: 1.05rem;
+        line-height: 1.7;
       }
 
       .service-list {
         list-style: none;
+        margin-top: 20px;
+        padding-left: 10px;
       }
+
       .service-list li {
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.7);
+        padding: 10px 0;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+        font-size: 1.05rem;
+        color: var(--primary);
+        font-weight: 600;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        position: relative;
+        padding-left: 25px;
       }
+
+      .service-list li:last-child {
+        border-bottom: none;
+      }
+
       .service-list li::before {
         content: "✦";
         color: var(--accent);
         margin-right: 10px;
+        font-size: 1.1rem;
+        position: absolute;
+        left: 0;
+        top: 8px;
+        line-height: 1;
       }
 
-      /* CLIENTES */
-      #clientes {
-        background: var(--white);
-        text-align: center;
-      }
-      .clients-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 40px;
-      }
-      .client-pill {
-        padding: 15px 30px;
-        border: 2px solid var(--primary);
-        font-family: "Cinzel", serif;
-        font-weight: 700;
-        color: var(--primary);
-        text-transform: uppercase;
-        transition: 0.3s;
-        background: transparent;
-      }
-      .client-pill:hover {
-        background: var(--primary);
-        color: var(--white);
-      }
-
-      /* FOOTER */
+      /* --- FOOTER --- */
       footer {
-        background: var(--accent-light);
-        padding: 80px 5%;
-        text-align: center;
-        border-top: 10px solid var(--accent);
-        position: relative;
-        z-index: 20; /* Garante que fique sobre outros elementos */
-      }
-      .btn-footer {
-        display: inline-block;
-        padding: 25px 60px;
         background: var(--primary);
         color: var(--white);
+        padding: 120px 0 80px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      footer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23123d34"/><circle cx="20" cy="20" r="2" fill="%23dca89e" opacity="0.15"/><circle cx="50" cy="60" r="3" fill="%23dca89e" opacity="0.1"/><circle cx="80" cy="30" r="1.5" fill="%23dca89e" opacity="0.2"/></svg>');
+        background-size: cover;
+        z-index: 0;
+        opacity: 0.15;
+      }
+
+      footer h2 {
+        color: var(--white);
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .footer-phrase {
+        font-size: 1.5rem;
+        max-width: 750px;
+        margin: 0 auto 50px;
+        font-family: var(--font-title);
+        color: var(--accent);
+        line-height: 1.5;
+        position: relative;
+        z-index: 2;
+        font-weight: 300;
+        padding: 0 20px;
+      }
+
+      .btn-cta {
+        padding: 22px 75px;
+        background: var(--white);
+        color: var(--primary);
         text-decoration: none;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 2px;
-        font-size: 1.1rem;
-        margin-top: 30px;
-        transition: 0.3s;
-        box-shadow: 10px 10px 0px var(--accent-dark);
-      }
-      .btn-footer:hover {
-        transform: translate(2px, 2px);
-        box-shadow: 5px 5px 0px var(--primary);
-      }
-
-      /* --- FINAL MANIFESTO SPACE (Repouso) --- */
-      #final-space {
-        min-height: 100vh;
-        background-color: var(--primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        letter-spacing: 2.5px;
+        transition: var(--transition);
+        display: inline-block;
+        border-radius: 50px;
+        font-size: 0.95rem;
         position: relative;
-        z-index: 1;
+        z-index: 2;
+        box-shadow: var(--shadow-md);
+        border: 2px solid var(--white);
       }
 
-      /* --- MOBILE STYLES --- */
-      .mobile-menu-btn {
+      .btn-cta:hover {
+        background: transparent;
+        color: var(--white);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-cta:active {
+        transform: translateY(0);
+      }
+
+      .copyright {
+        margin-top: 80px;
+        font-size: 0.85rem;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* MOBILE */
+      .mobile-btn {
         display: none;
         background: none;
         border: none;
-        font-size: 2rem;
+        font-size: 1.8rem;
         color: var(--primary);
         cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        position: relative;
+        z-index: 1001;
+      }
+
+      .mobile-btn:hover {
+        background: rgba(18, 61, 52, 0.05);
+      }
+
+      .mobile-btn.active {
+        color: var(--accent);
       }
 
       @media (max-width: 900px) {
-        .about-grid {
-          grid-template-columns: 1fr;
-        }
-        .about-img-box {
-          order: -1;
-          height: 400px;
-        }
         .nav-links {
           display: none;
-        }
-        h1 {
-          font-size: 3rem !important;
-        }
-        section {
-          padding: 60px 5%;
-        }
-        #typewriter-text {
-          font-size: 1.5rem;
-          opacity: 0.1;
+          flex-direction: column;
+          position: fixed;
+          top: 0;
+          right: -100%;
+          width: 85%;
+          height: 100vh;
+          background: var(--white);
+          padding: 100px 40px 40px;
+          box-shadow: var(--shadow-lg);
+          transition: var(--transition);
+          z-index: 999;
+          align-items: flex-start;
+          gap: 25px;
         }
 
-        /* Mobile Nav */
-        .mobile-menu-btn {
-          display: block;
-        }
-        .nav-links {
-          position: absolute;
-          top: 80px;
-          left: 0;
-          width: 100%;
-          background: var(--bg); /* Fundo sólido para leitura */
-          flex-direction: column;
-          padding: 30px 0;
-          text-align: center;
-          border-bottom: 2px solid var(--accent);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
         .nav-links.active {
           display: flex;
+          right: 0;
         }
+
         .nav-links li {
-          margin: 15px 0;
+          width: 100%;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+          padding-bottom: 15px;
+          margin-bottom: 15px;
+        }
+
+        .nav-links a {
+          font-size: 1.5rem;
+          text-transform: none;
+          letter-spacing: 0;
+          padding: 5px 0;
+          width: 100%;
+        }
+
+        .mobile-btn {
+          display: flex;
+        }
+
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1.15rem;
+          padding-left: 20px;
+        }
+
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 60px;
+        }
+
+        .about-img-wrap {
+          height: auto;
+          max-width: 500px;
+          margin: 0 auto;
+        }
+
+        .about-text h2 {
+          font-size: 2.8rem;
+          margin-bottom: 30px;
+        }
+
+        .services-header h2 {
+          font-size: 2.7rem;
+        }
+
+        .service-card {
+          padding: 40px 30px;
+        }
+
+        footer h2 {
+          font-size: 2.8rem;
+        }
+
+        .footer-phrase {
+          font-size: 1.3rem;
+        }
+
+        .btn-cta {
+          padding: 18px 50px;
+          font-size: 0.9rem;
+          letter-spacing: 2px;
+        }
+
+        .visual-break {
+          height: 70vh;
+        }
+      }
+
+      @media (max-width: 480px) {
+        nav {
+          height: 75px;
+        }
+
+        .logo img {
+          height: 50px;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+          font-size: 1.1rem;
+          margin-bottom: 30px;
+        }
+
+        .hero-cta {
+          padding: 14px 35px;
+          font-size: 0.85rem;
+          letter-spacing: 1.2px;
+        }
+
+        .about {
+          padding: 100px 0;
+        }
+
+        .services {
+          padding: 100px 0;
+        }
+
+        .services-header {
+          margin-bottom: 60px;
+        }
+
+        footer {
+          padding: 90px 0 60px;
+        }
+
+        footer h2 {
+          font-size: 2.5rem;
+        }
+
+        .footer-phrase {
+          font-size: 1.25rem;
+        }
+
+        .btn-cta {
+          padding: 16px 40px;
+        }
+
+        .copyright {
+          font-size: 0.8rem;
+          letter-spacing: 1.5px;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Fundo Fixo (Imagem) -->
-    <div id="bg-texture"></div>
-
-    <!-- Texto de Fundo (Máquina de Escrever) -->
-    <div id="typewriter-container">
+    <div id="bg-typewriter">
       <div id="typewriter-text"></div>
     </div>
 
-    <!-- Cursor Personalizado -->
-    <div class="cursor-quill">
-      <svg
-        fill="#123d34"
-        viewBox="0 0 512 512"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M498.4 13.5c-9.6-9.6-25.2-9.6-34.8 0L208.2 269c-9.6 9.6-13.4 23.3-10.4 36.4l20.4 89.2c1.7 7.4 8.3 12.6 15.9 12.6 1 0 2-.1 3-.3l89.2-20.4c13.1-3 26.8-6.9 36.4-16.4L618.4 114.9c9.6-9.6 9.6-25.2 0-34.8L498.4 13.5zM63.6 426.6l-13-13C25.3 388.3 25.3 347.3 50.6 322l128-128c9.6-9.6 25.2-9.6 34.8 0 9.6 9.6 9.6 25.2 0 34.8L85.4 356.8c-6.1 6.1-6.1 16 0 22.1l13 13c6.1 6.1 16 6.1 22.1 0l128-128c9.6-9.6 25.2-9.6 34.8 0 9.6 9.6 9.6 25.2 0 34.8l-128 128c-25.3 25.3-66.3 25.3-91.6 0z"
-        />
-      </svg>
-    </div>
-
     <nav>
-      <a href="#" class="logo">entre<span>laços</span>.</a>
-      <!-- Botão Menu Mobile -->
-      <button class="mobile-menu-btn">☰</button>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#sobre">Quem Somos</a></li>
-        <li><a href="#servicos">Serviços</a></li>
-        <li><a href="#contato">Contato</a></li>
-      </ul>
+      <div class="nav-content">
+        <a href="#home" class="logo"
+          ><img id="logo-img" src="" alt="Entrelaços"
+        /></a>
+        <button class="mobile-btn" aria-label="Menu">☰</button>
+        <ul class="nav-links">
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#sobre">Quem Somos</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
     </nav>
 
     <section class="hero" id="home">
-      <h1>
-        Narrativas<br />
-        <span style="color: var(--accent); font-style: italic">Sólidas</span>
-        para<br />
-        Arquitetura.
-      </h1>
-      <div class="hero-subtitle">
-        <p>
-          Estratégia digital e conteúdo jornalístico para escritórios que buscam
-          autoridade, elegância e resultados reais no mercado de luxo.
-        </p>
+      <div class="hero-bg" id="hero-bg-img"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 id="hero-title"></h1>
+        <div class="hero-subtitle"><p id="hero-desc"></p></div>
+        <a href="#contato" class="hero-cta">Vamos conversar?</a>
       </div>
     </section>
 
-    <div class="marquee">
-      <div class="marquee-content">
-        GERENCIAMENTO DE MÍDIAS • CONSULTORIA ESTRATÉGICA • ROTEIROS PARA VÍDEO
-        • CURSOS ONLINE • BRANDING • GERENCIAMENTO DE MÍDIAS • CONSULTORIA
-        ESTRATÉGICA • ROTEIROS PARA VÍDEO • CURSOS ONLINE • BRANDING •
+    <div class="marquee-section">
+      <div
+        class="marquee-content"
+        data-content="ARQUITETURA • DESIGN • ESTRATÉGIA • CONTEÚDO • POSICIONAMENTO • MARKETING •"
+      >
+        ARQUITETURA • DESIGN • ESTRATÉGIA • CONTEÚDO • POSICIONAMENTO •
+        MARKETING •
       </div>
     </div>
 
-    <section id="sobre">
-      <div class="about-grid">
-        <div class="about-text">
-          <p
-            style="
-              color: var(--primary);
-              font-weight: 800;
-              letter-spacing: 2px;
-              margin-bottom: 10px;
-            "
-          >
-            A FUNDADORA
-          </p>
-          <div class="quote">
-            "Escrevendo que eu existo. A minha forma de existir no mundo é
-            através da escrita."
+    <section class="about" id="sobre">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-img-wrap">
+            <img
+              id="about-img-src"
+              src=""
+              alt="Fernanda Pinho"
+              class="about-img"
+            />
           </div>
-          <p style="margin-bottom: 20px; font-size: 1.1rem">
-            <strong>Fernanda Pinho</strong> é jornalista com sólida trajetória
-            no impresso (Revista Imobiliari, Líder, Ponteio). Ela entendeu que a
-            arquitetura exige uma linguagem única: técnica para o profissional,
-            poética para o cliente.
-          </p>
-          <p style="font-size: 1.1rem">
-            Na Entrelaços, unimos o rigor da apuração jornalística à velocidade
-            do digital. Não fazemos apenas posts; documentamos legados.
-          </p>
-        </div>
-        <div class="about-img-box">
-          <img
-            src="https://i.ibb.co/ksqd98t5/Captura-de-tela-2026-01-17-174910.jpg"
-            alt="Fernanda Pinho"
-          />
+          <div class="about-text">
+            <h2>A Entre Laços</h2>
+            <div id="about-content"></div>
+            <a
+              href="https://www.instagram.com/entrelacosconteudo"
+              target="_blank"
+              class="btn-insta"
+              >Siga nosso Instagram</a
+            >
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="servicos">
-      <div class="services-head">
-        <span>Soluções Dedicadas</span>
-        <h2>Nossos Serviços</h2>
-      </div>
+    <div class="visual-break">
+      <img id="visual-break-img" src="" alt="Trabalho" class="parallax-img" />
+    </div>
 
-      <div class="services-grid">
-        <!-- Card 1 -->
-        <div class="service-card">
-          <h3>Gerenciamento Total</h3>
-          <p>
-            Serviço por meio do qual cuidamos integralmente das redes sociais de
-            um cliente desenvolvendo planejamento estratégico de conteúdo, copy,
-            escolha de imagens, arte gráfica, organização de feed, roteiros para
-            vídeos, programação de postagens e outras demandas específicas.
-          </p>
-          <ul class="service-list">
-            <li>Planejamento Estratégico</li>
-            <li>Copy Jornalístico</li>
-            <li>Curadoria de Imagens</li>
-            <li>Edição de Reels</li>
-            <li>Tráfego Pago</li>
-          </ul>
+    <section class="services" id="servicos">
+      <div class="container">
+        <div class="services-header">
+          <span>O que fazemos</span>
+          <h2>Nossos Serviços</h2>
         </div>
-
-        <!-- Card 2 -->
-        <div class="service-card">
-          <h3>Consultoria</h3>
-          <p>
-            A consultoria é uma contratação pontual para um encontro (presencial
-            ou on-line) com duas horas de duração na qual trabalharemos para
-            resolver uma demanda específica. Esta demanda é diagnosticada por
-            meio de um briefing previamente enviado ao cliente.
-          </p>
-          <ul class="service-list">
-            <li>Diagnóstico via Briefing</li>
-            <li>Análise de Posicionamento</li>
-            <li>Definição de Linha Editorial</li>
-            <li>Treinamento de Equipe</li>
-            <li>Online ou Presencial</li>
-          </ul>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="service-card">
-          <h3>Script para Vídeos</h3>
-          <p>
-            Visando auxiliar nosso mercado na entrega de vídeos que informam,
-            impactam e emocionam, produzimos roteiros para gravação bem como
-            textos em diferentes formatos para serem utilizados como narração
-            desses vídeos.
-          </p>
-          <ul class="service-list">
-            <li>Scripts para YouTube</li>
-            <li>Roteiros para Reels/TikTok</li>
-            <li>Storytelling de Obra</li>
-            <li>Textos para Narração</li>
-            <li>Direção de Cena</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section id="clientes">
-      <h2 style="font-size: 2.5rem; margin-bottom: 30px; color: var(--primary)">
-        Parceiros & Mídia
-      </h2>
-      <div class="clients-grid">
-        <div class="client-pill">Revista Imobiliari</div>
-        <div class="client-pill">Revista da Líder</div>
-        <div class="client-pill">Revista do Ponteio</div>
-        <div class="client-pill">Casas de Design</div>
-        <div class="client-pill">Mostra Morar Mais</div>
+        <div class="services-container" id="services-grid"></div>
       </div>
     </section>
 
     <footer id="contato">
-      <h2 style="font-size: 3rem; margin-bottom: 20px">Vamos conversar?</h2>
-      <p>
-        Seu escritório merece uma comunicação à altura da sofisticação dos seus
-        projetos.
-      </p>
-      <a
-        href="https://www.instagram.com/entrelacosconteudo/"
-        target="_blank"
-        class="btn-footer"
-        >Entrar em Contato</a
-      >
-      <div style="margin-top: 60px; font-size: 0.8rem; opacity: 0.7">
-        © 2026 ENTRELAÇOS. BELO HORIZONTE.
+      <div class="container">
+        <h2>ENTRE EM CONTATO</h2>
+        <p class="footer-phrase" id="footer-text"></p>
+        <a
+          href="https://www.instagram.com/entrelacosconteudo/"
+          target="_blank"
+          class="btn-cta"
+          >CLIQUE AQUI</a
+        >
+        <div class="copyright">© 2026 ENTRELAÇOS. BELO HORIZONTE.</div>
       </div>
     </footer>
 
-    <!-- NOVA SEÇÃO FINAL: O Espaço de Repouso -->
-    <section id="final-space">
-      <!-- O conteúdo aqui é o texto fixo do background que vai aparecer por cima -->
-    </section>
-
     <script>
+      const CONTEUDO_SITE = {
+        imagens: {
+          logo: "https://i.ibb.co/C3bN4TT2/logo-entrelacos-verde-3.png",
+          fundo_topo:
+            "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop",
+          foto_fernanda: "https://i.ibb.co/pv6zgrDY/FEH68.jpg",
+          foto_meio: "https://i.ibb.co/dwRpsMZr/FEH30.jpg",
+        },
+        hero: {
+          titulo:
+            "Comunicação de <span>Alto Padrão</span><br>para Arquitetura e Design.",
+          descricao:
+            "Estratégias de marketing e conteúdo digital para escritórios e empresas dos segmentos de arquitetura, design de interiores e construção civil.",
+        },
+        // --- TEXTO QUE APARECE NO FUNDO DO SITE (A "MÁQUINA DE ESCREVER") ---
+        texto_fundo:
+          "ESTRATÉGIA  CONTEÚDO  DESIGN  ALMA  TEXTO  ARQUITETURA  POSICIONAMENTO  JORNALISMO  RESULTADO  ELEGÂNCIA  ",
+        sobre: `
+          <p>Muito prazer, meu nome é <strong>Fernanda Pinho</strong> e sou jornalista especializada em Marketing Digital. Desde 2009, empreendo na área da comunicação, com foco no atendimento a clientes dos segmentos de arquitetura, design e construção.</p>
+          <p>Após anos prestando serviços variados — como assessoria de imprensa e produção de conteúdo para revistas — voltei minha carreira totalmente para o marketing digital, decisão tomada após a conclusão de uma pós-graduação na área.</p>
+          <p>A partir desse desejo, nasce, em 2020, a <strong>Entre Laços Conteúdo e Estratégia</strong>, uma agência que oferece aos seus clientes um atendimento individualizado, sempre com foco em preservar seus principais valores: agilidade, pontualidade, comprometimento, constância e transparência.</p>
+        `,
+        servicos: [
+          {
+            titulo: "Gerenciamento Total",
+            texto:
+              "Serviço por meio do qual cuidamos integralmente das redes sociais de um cliente desenvolvendo planejamento estratégico de conteúdo, copy, escolha de imagens, arte gráfica e roteiros.",
+            itens: [
+              "Planejamento Estratégico",
+              "Copy Jornalístico",
+              "Curadoria de Imagens",
+              "Edição de Reels",
+              "Tráfego Pago",
+            ],
+          },
+          {
+            titulo: "Consultoria",
+            texto:
+              "Contratação pontual para um encontro (presencial ou on-line) com duas horas de duração para resolver uma demanda específica diagnosticada via briefing.",
+            itens: [
+              "Diagnóstico via Briefing",
+              "Análise de Posicionamento",
+              "Definição de Linha Editorial",
+              "Treinamento de Equipe",
+              "Online ou Presencial",
+            ],
+          },
+          {
+            titulo: "Script para Vídeos",
+            texto:
+              "Produzimos roteiros para gravação bem como textos em diferentes formatos para serem utilizados como narração, visando vídeos que informam, impactam e emocionam.",
+            itens: [
+              "Scripts para YouTube",
+              "Roteiros para Reels/TikTok",
+              "Storytelling de Obra",
+              "Textos para Narração",
+              "Direção de Cena",
+            ],
+          },
+        ],
+        footer:
+          "O posicionamento estratégico na internet pode ser o ponto de virada do seu negócio.",
+      };
+
+      // --- SISTEMA AUTOMÁTICO (NÃO MEXA) ---
       document.addEventListener("DOMContentLoaded", function () {
-        // GSAP Plugins
+        // 1. Carregar Imagens
+        document.getElementById("logo-img").src = CONTEUDO_SITE.imagens.logo;
+        document.getElementById("hero-bg-img").style.backgroundImage =
+          `url('${CONTEUDO_SITE.imagens.fundo_topo}')`;
+        document.getElementById("about-img-src").src =
+          CONTEUDO_SITE.imagens.foto_fernanda;
+        document.getElementById("visual-break-img").src =
+          CONTEUDO_SITE.imagens.foto_meio;
+
+        // 2. Carregar Textos
+        document.getElementById("hero-title").innerHTML =
+          CONTEUDO_SITE.hero.titulo;
+        document.getElementById("hero-desc").innerHTML =
+          CONTEUDO_SITE.hero.descricao;
+        document.getElementById("about-content").innerHTML =
+          CONTEUDO_SITE.sobre;
+        document.getElementById("footer-text").innerHTML = CONTEUDO_SITE.footer;
+
+        // 3. Gerar Cards
+        const servicesContainer = document.getElementById("services-grid");
+        CONTEUDO_SITE.servicos.forEach((servico) => {
+          let itensHtml = servico.itens
+            .map((item) => `<li>${item}</li>`)
+            .join("");
+          let cardHtml = `
+            <div class="service-card">
+              <h3>${servico.titulo}</h3>
+              <p>${servico.texto}</p>
+              <ul class="service-list">${itensHtml}</ul>
+            </div>
+          `;
+          servicesContainer.innerHTML += cardHtml;
+        });
+
+        // 4. Animações (GSAP)
         gsap.registerPlugin(ScrollTrigger);
 
-        // TEXTO DE FUNDO
-        const typeText = document.getElementById("typewriter-text");
-        // Texto mais longo para preencher o visual
-        const fullText =
-          "A ARQUITETURA NÃO TERMINA NA CONSTRUÇÃO. ELA CONTINUA NA HISTÓRIA QUE É CONTADA SOBRE ELA. ESTRUTURA SÓLIDA. ESTÉTICA APURADA. ALMA. TEXTO. DESIGN. ESTRATÉGIA.";
+        // Navigation scroll effect
+        const nav = document.querySelector("nav");
+        gsap.to(nav, {
+          backgroundColor: "rgba(255, 255, 255, 0.99)",
+          height: 80,
+          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.08)",
+          duration: 0.3,
+          scrollTrigger: {
+            trigger: document.body,
+            start: "top -50px",
+            end: "top -60px",
+            scrub: true,
+            onEnter: () => nav.classList.add("scrolled"),
+            onLeaveBack: () => nav.classList.remove("scrolled"),
+          },
+        });
 
-        // Garantir que comece vazio
-        typeText.innerText = "";
+        // Active link on scroll
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll(".nav-links a");
 
+        window.addEventListener("scroll", () => {
+          let current = "";
+
+          sections.forEach((section) => {
+            const sectionTop = section.offsetTop - 100;
+            if (pageYOffset >= sectionTop) {
+              current = section.getAttribute("id");
+            }
+          });
+
+          navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href").substring(1) === current) {
+              link.classList.add("active");
+            }
+          });
+        });
+
+        // --- LÓGICA DA MÁQUINA DE ESCREVER DE FUNDO ---
+        const typeEl = document.getElementById("typewriter-text");
+        const bgText = CONTEUDO_SITE.texto_fundo.repeat(25); // Repete para ficar bem longo
         let obj = { length: 0 };
 
-        // 1. Animação de Digitação (acontece durante todo o scroll da página)
         gsap.to(obj, {
-          length: fullText.length,
+          length: bgText.length,
           ease: "none",
           scrollTrigger: {
             trigger: "body",
             start: "top top",
             end: "bottom bottom",
-            scrub: 1,
+            scrub: 0.5, // Suaviza
           },
           onUpdate: () => {
             const len = Math.ceil(obj.length);
-            typeText.innerText = fullText.substring(0, len) + "|";
+            typeEl.innerText = bgText.substring(0, len);
           },
         });
 
-        // 2. Animação de "Destaque" do Texto no Final
-        // Quando chegar na seção #final-space, o texto ganha opacidade total e cor vibrante
-        gsap.to("#typewriter-text", {
-          opacity: 1,
-          color: "#eebcb3", // Rosa Salmão para contraste no fundo verde escuro
-          mixBlendMode: "normal", // Remove o blend mode para ficar nítido
+        // Hero animations
+        gsap.to(".hero-bg", {
+          yPercent: 25,
+          scale: 1.1,
+          ease: "none",
           scrollTrigger: {
-            trigger: "#final-space",
-            start: "top 70%", // Ajustado para começar antes de terminar o scroll
-            end: "bottom bottom",
+            trigger: ".hero",
+            start: "top top",
+            end: "bottom top",
             scrub: true,
           },
         });
 
-        // Ajuste do Container do Texto no final
-        gsap.to("#typewriter-container", {
-          mixBlendMode: "normal",
+        gsap.fromTo(
+          "#hero-title",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            delay: 0.3,
+          },
+        );
+
+        gsap.fromTo(
+          ".hero-subtitle",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.6,
+          },
+        );
+
+        gsap.fromTo(
+          ".hero-cta",
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            delay: 0.9,
+          },
+        );
+
+        // Fernanda (P&B -> Colorido)
+        gsap.to(".about-img", {
+          filter: "grayscale(0%) contrast(1.1)",
+          scale: 1,
+          duration: 1.5,
           scrollTrigger: {
-            trigger: "#final-space",
-            start: "top 80%",
-            end: "bottom bottom",
+            trigger: ".about-grid",
+            start: "top 75%",
+            end: "center center",
+            scrub: 1,
+          },
+        });
+
+        gsap.from(".about-text", {
+          opacity: 0,
+          x: 50,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".about-grid",
+            start: "top 70%",
+          },
+        });
+
+        // Foto Mãos (Visual Break - Parallax + Reveal)
+        gsap.to(".parallax-img", {
+          filter: "grayscale(10%) contrast(1.1) brightness(0.95)",
+          scale: 1.05,
+          yPercent: 10,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".visual-break",
+            start: "top 100%",
+            end: "bottom top",
             scrub: true,
           },
         });
 
-        // Cursor personalizado
-        if (window.matchMedia("(min-width: 769px)").matches) {
-          const cursor = document.querySelector(".cursor-quill");
-          window.addEventListener("mousemove", (e) => {
-            gsap.to(cursor, {
-              x: e.clientX,
-              y: e.clientY,
-              duration: 0.1,
-              ease: "power1.out",
-            });
-          });
-
-          // Hover Effects
-          document
-            .querySelectorAll("a, .service-card, .btn-footer")
-            .forEach((el) => {
-              el.addEventListener("mouseenter", () => {
-                gsap.to(cursor, { scale: 1.2, rotation: -15, duration: 0.3 });
-              });
-              el.addEventListener("mouseleave", () => {
-                gsap.to(cursor, { scale: 1, rotation: 0, duration: 0.3 });
-              });
-            });
-        }
-
-        // LOGICA DO MENU MOBILE (CORREÇÃO)
-        const mobileBtn = document.querySelector(".mobile-menu-btn");
-        const navLinks = document.querySelector(".nav-links");
-
-        mobileBtn.addEventListener("click", () => {
-          navLinks.classList.toggle("active");
+        // Cards Serviços
+        gsap.utils.toArray(".service-card").forEach((card, i) => {
+          gsap.fromTo(
+            card,
+            { opacity: 0, y: 40 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              ease: "power2.out",
+              delay: i * 0.15,
+              scrollTrigger: {
+                trigger: ".services-container",
+                start: "top 85%",
+              },
+            },
+          );
         });
 
-        // Fechar ao clicar em um link
-        navLinks.querySelectorAll("a").forEach((link) => {
+        // Footer animations
+        gsap.fromTo(
+          "footer h2, .footer-phrase, .btn-cta",
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: "footer",
+              start: "top 90%",
+            },
+          },
+        );
+
+        // Mobile Menu
+        const btn = document.querySelector(".mobile-btn");
+        const navMenu = document.querySelector(".nav-links");
+        const navLinksList = navMenu.querySelectorAll("a");
+
+        btn.addEventListener("click", () => {
+          navMenu.classList.toggle("active");
+          btn.classList.toggle("active");
+          document.body.style.overflow = navMenu.classList.contains("active")
+            ? "hidden"
+            : "auto";
+        });
+
+        navLinksList.forEach((link) => {
           link.addEventListener("click", () => {
-            navLinks.classList.remove("active");
+            navMenu.classList.remove("active");
+            btn.classList.remove("active");
+            document.body.style.overflow = "auto";
           });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            navMenu.classList.contains("active") &&
+            !navMenu.contains(e.target) &&
+            !btn.contains(e.target)
+          ) {
+            navMenu.classList.remove("active");
+            btn.classList.remove("active");
+            document.body.style.overflow = "auto";
+          }
         });
       });
     </script>
